@@ -58,7 +58,7 @@ spec:
           ports:
             - containerPort: {{ .Values.phpfpmService.phpfpmPort }}
           resources:
-  {{ .Values.resourcesphpfpm | toYaml | trim | indent 12 }}
+{{ .Values.resourcesphpfpm | toYaml | trim | indent 12 }}
 readinessProbe:
   tcpSocket:
     port: {{ .Values.phpfpmService.phpfpmPort }}
@@ -97,7 +97,7 @@ spec:
               - name: https
                 containerPort: 8443
             resources:
-  {{ .Values.resourcesnginx | toYaml | trim | indent 12 }}
+{{ .Values.resourcesnginx | toYaml | trim | indent 12 }}
 livenessProbe:
   httpGet:
     path: /
@@ -162,14 +162,14 @@ spec:
                   - bash
                   - "-c"
                   - |
-                  mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD ping &> /dev/null
+                    mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD ping &> /dev/null
               initialDelaySeconds: 10
               timeoutSeconds: 5
             volumeMounts:
               - name: {{ template "fullname" . }}-db
                 mountPath: /var/lib/mysql
             resources:
-  {{ .Values.resourcesdb | toYaml | trim | indent 12 }}
+{{ .Values.resourcesdb | toYaml | trim | indent 12 }}
 volumes:
   - name: {{ template "fullname" . }}-db
     persistentVolumeClaim:
