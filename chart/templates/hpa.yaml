@@ -1,0 +1,39 @@
+apiVersion: {{ template "common.capabilities.autoscale.apiVersion" . }}
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "fullname" . }}-phpfpm-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: {{ template "common.capabilities.deployment.apiVersion" . }}
+    kind: Deployment
+    name: {{ template "fullname" . }}-phpfpm
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    -
+      type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+---
+apiVersion: {{ template "common.capabilities.autoscale.apiVersion" . }}
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "fullname" . }}-db-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: {{ template "common.capabilities.deployment.apiVersion" . }}
+    kind: Deployment
+    name: {{ template "fullname" . }}-db
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    -
+      type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 70

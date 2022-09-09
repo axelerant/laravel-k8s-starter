@@ -1,0 +1,89 @@
+replicaCount: 1
+
+image:
+  repository: ci-k8s
+  pullPolicy: Never
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+nginximage:
+  repository: "bitnami/nginx"
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+dbImage:
+  repository: "mysql/mysql-server"
+  pullPolicy: IfNotPresent
+  tag: "8.0"
+
+nginxService:
+  name: nginx
+  type: NodePort
+  externalPort: 80
+  internalPort: 8080
+
+phpfpmService:
+  name: phpfpm
+  type: NodePort
+  phpfpmPort: 9000
+
+dbService:
+  name: db
+  type: NodePort
+  port: 3306
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  hosts:
+    - chart-example.local
+
+resourcesphpfpm:
+  requests:
+    cpu: "500m"
+    memory: "128Mi"
+  limits:
+    cpu: "1"
+    memory: "256Mi"
+
+resourcesdb:
+  requests:
+    cpu: "200m"
+    memory: "1024Mi"
+  limits:
+    cpu: "800m"
+    memory: "1512Mi"
+
+resourcesnginx:
+  requests:
+    cpu: "100m"
+    memory: "64Mi"
+  limits:
+    cpu: "500m"
+    memory: "128Mi"
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+dbRootPassword: "test"
+dbName: "test"
+dbUser: "test"
+dbPassword: "test"
+apiKey: "test"

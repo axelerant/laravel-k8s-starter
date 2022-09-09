@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "fullname" . }}-phpfpm
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  type: {{ .Values.phpfpmService.type }}
+  ports:
+    - port: {{ .Values.phpfpmService.phpfpmPort }}
+      targetPort: {{ .Values.phpfpmService.phpfpmPort }}
+      protocol: TCP
+      name: {{ .Values.phpfpmService.name }}
+  selector:
+    app: {{ template "fullname" . }}-phpfpm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "fullname" . }}-nginx
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  type: {{ .Values.nginxService.type }}
+  ports:
+    - port: {{ .Values.nginxService.externalPort }}
+      targetPort: {{ .Values.nginxService.internalPort }}
+      protocol: TCP
+      name: {{ .Values.nginxService.name }}
+  selector:
+    app: {{ template "fullname" . }}-nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "fullname" . }}-db
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  type: {{ .Values.dbService.type }}
+  ports:
+    - port: {{ .Values.dbService.port }}
+      targetPort: {{ .Values.dbService.port }}
+      protocol: TCP
+      name: {{ template "fullname" . }}-db
+  selector:
+    app: {{ template "fullname" . }}-db
