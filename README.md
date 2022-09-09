@@ -6,6 +6,8 @@ This template will help you with Laravel application deployment using Kubernetes
 
 ```shell
 minikube start
+eval $(minikube -p minikube docker-env)
+docker build . --tag=ci-k8s
 export DB_ROOT_PASSWORD=rootpass DB_NAME=db DB_USER=main DB_PASSWORD=password API_KEY=samplekey
 helm install --set dbRootPassword=$DB_ROOT_PASSWORD --set dbName=$DB_NAME --set dbUser=$DB_USER --set dbPassword=$DB_PASSWORD --set apiKey=$API_KEY laravel-k8s chart/
 minikube tunnel
