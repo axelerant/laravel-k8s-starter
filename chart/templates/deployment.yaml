@@ -53,24 +53,24 @@ spec:
               value: {{ .Values.dbPassword | trim }}
             - name: DB_HOST
               value: "{{ template "fullname" . }}-db"
-            - name: HS_API_KEY
+            - name: API_KEY
               value: {{ .Values.apiKey | trim }}
           ports:
             - containerPort: {{ .Values.phpfpmService.phpfpmPort }}
           resources:
 {{ .Values.resourcesphpfpm | toYaml | trim | indent 12 }}
-readinessProbe:
-  tcpSocket:
-    port: {{ .Values.phpfpmService.phpfpmPort }}
-  initialDelaySeconds: 10
-  timeoutSeconds: 5
-volumeMounts:
-  - name: code
-    mountPath: /code
-volumes:
-  - name: code
-    persistentVolumeClaim:
-      claimName: code
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.phpfpmService.phpfpmPort }}
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: code
+              mountPath: /code
+      volumes:
+        - name: code
+          persistentVolumeClaim:
+            claimName: code
 ---
 apiVersion: {{ template "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
@@ -97,31 +97,31 @@ spec:
               - name: https
                 containerPort: 8443
             resources:
-{{ .Values.resourcesnginx | toYaml | trim | indent 12 }}
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
-  initialDelaySeconds: 30
-  timeoutSeconds: 5
-readinessProbe:
-  httpGet:
-    path: /
-    port: http
-  initialDelaySeconds: 5
-  timeoutSeconds: 1
-volumeMounts:
-  - name: nginx-config
-    mountPath: /opt/bitnami/nginx/conf/server_blocks
-  - name: code
-    mountPath: /code
-volumes:
-  - name: nginx-config
-    configMap:
-      name: {{ template "fullname" . }}
-  - name: code
-    persistentVolumeClaim:
-      claimName: code
+{{ .Values.resourcesnginx | toYaml | indent 14 }}
+            livenessProbe:
+              httpGet:
+                path: /
+                port: http
+              initialDelaySeconds: 30
+              timeoutSeconds: 5
+            readinessProbe:
+              httpGet:
+                path: /
+                port: http
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+            volumeMounts:
+              - name: nginx-config
+                mountPath: /opt/bitnami/nginx/conf/server_blocks
+              - name: code
+                mountPath: /code
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ template "fullname" . }}
+        - name: code
+          persistentVolumeClaim:
+            claimName: code
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -169,8 +169,8 @@ spec:
               - name: {{ template "fullname" . }}-db
                 mountPath: /var/lib/mysql
             resources:
-{{ .Values.resourcesdb | toYaml | trim | indent 12 }}
-volumes:
-  - name: {{ template "fullname" . }}-db
-    persistentVolumeClaim:
-      claimName: {{ template "fullname" . }}-db
+{{ .Values.resourcesdb | toYaml | trim | indent 14 }}
+      volumes:
+        - name: {{ template "fullname" . }}-db
+          persistentVolumeClaim:
+            claimName: {{ template "fullname" . }}-db
